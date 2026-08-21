@@ -1,15 +1,17 @@
 {
   "expo": {
-    "name": "dawan-training-app",
+    "name": "Dawan Formations",
     "slug": "dawan-training-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.lmcontrol.dawantrainingapp"
     },
     "android": {
+      "package": "com.lmcontrol.dawantrainingapp",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",

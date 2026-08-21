@@ -1,0 +1,27 @@
+# Functional/E2E flow, run with Maestro (https://maestro.mobile.dev).
+# Requires the app running in a simulator/emulator/device (e.g. via `expo start` + `maestro test`).
+# Exercises requirement coverage end-to-end: Liste -> Détail -> Devis -> confirmation.
+appId: com.lmcontrol.dawantrainingapp
+---
+- launchApp
+- assertVisible:
+    id: "training-list"
+# Tap the first training card in the catalog.
+- tapOn:
+    id: "training-item-.*"
+    index: 0
+- assertVisible:
+    id: "training-detail"
+- tapOn:
+    id: "ask-for-quote"
+- assertVisible:
+    id: "quote-form"
+- tapOn:
+    id: "quote-fullName"
+- inputText: "Jane Doe"
+- tapOn:
+    id: "quote-email"
+- inputText: "jane.doe@example.com"
+- tapOn:
+    id: "quote-submit"
+- assertVisible: "Demande envoyée"
