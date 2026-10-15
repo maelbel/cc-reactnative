@@ -1,10 +1,11 @@
 import React, { useCallback, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/types';
 import { quoteApi } from '../../api/quoteApi';
 import { validateQuoteForm, QuoteFormValues } from '../../domain/services/quoteValidation';
 import { toAppError, ValidationError } from '../../shared/errors/AppError';
+import { QuoteSentView } from './QuoteSentView';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Quote'>;
 
@@ -21,6 +22,7 @@ export function QuoteFormScreen({ route, navigation }: Props) {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [sentTo, setSentTo] = useState<string | null>(null);
 
   const setField = useCallback(
     (field: keyof QuoteFormValues) => (text: string) => setValues((prev) => ({ ...prev, [field]: text })),
@@ -50,15 +52,17 @@ export function QuoteFormScreen({ route, navigation }: Props) {
         trainingTitle,
         trainingSlug,
       });
-      Alert.alert('Demande envoyée', 'Votre demande de devis a bien été transmise.', [
-        { text: 'OK', onPress: () => navigation.popToTop() },
-      ]);
+      setSentTo(values.email.trim());
     } catch (error) {
       setSubmitError(toAppError(error).message);
     } finally {
       setSubmitting(false);
     }
   }, [values, trainingTitle, trainingSlug, navigation]);
+
+  if (sentTo) {
+    return <QuoteSentView email={sentTo} trainingTitle={trainingTitle} onDone={() => navigation.popToTop()} />;
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.content} testID="quote-form">
