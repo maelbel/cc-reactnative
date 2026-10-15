@@ -30,6 +30,14 @@ describe('httpClient', () => {
     expect(result).toBeUndefined();
   });
 
+  it('accepts a plain-text success body such as the "OK" returned by EmailJS', async () => {
+    mockFetchOnce({ ok: true, text: 'OK' } as any);
+
+    const result = await httpClient.post<string>('https://example.test/plain', {});
+
+    expect(result).toBe('OK');
+  });
+
   it('throws an HttpError for a non-2xx response', async () => {
     mockFetchOnce({ ok: false, status: 404, text: 'Not found' } as any);
 

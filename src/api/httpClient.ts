@@ -48,9 +48,22 @@ class HttpClient {
       throw new HttpError(response.status, await this.safeReadMessage(response));
     }
 
-    // Some endpoints (e.g. a successful email-send) may return an empty body.
-    const text = await response.text();
-    return (text ? JSON.parse(text) : undefined) as T;
+    return this.parseBody<T>(await response.text());
+  }
+
+  /**
+   * Success bodies are not always JSON: some endpoints return nothing, and
+   * EmailJS answers a plain-text "OK". An empty body yields `undefined`,
+   * a JSON body is parsed, and any other text is returned as-is instead of
+   * crashing on `JSON.parse`.
+   */
+  private parseBody<T>(text: string): T {
+    if (!text) return undefined as T;
+    try {
+      return JSON.parse(text) as T;
+    } catch {
+      return text as T;
+    }
   }
 
   private async safeReadMessage(response: Response): Promise<string | undefined> {

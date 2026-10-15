@@ -62,7 +62,17 @@ Le détail des choix (couches, SOLID, tell-don't-ask, généricité) est expliqu
 
 ## Dette technique assumée
 
-- **Envoi d'email** : `src/api/quoteApi.ts` utilise [EmailJS](https://www.emailjs.com), pensé pour être appelé depuis un client non fiable (clé publique embarquée dans l'app). C'est un compromis assumé pour respecter l'énoncé ("le formulaire envoie un email") sans backend dédié. Avant une mise en production réelle, remplacer par un vrai backend, ou par un simple `Linking.openURL('mailto:...')` si l'objectif est seulement de préparer l'envoi. Les identifiants EmailJS dans `src/config/env.ts` sont des placeholders à remplacer.
+- **Envoi d'email** : `src/api/quoteApi.ts` utilise [EmailJS](https://www.emailjs.com), pensé pour être appelé depuis un client non fiable (clé publique embarquée dans l'app). C'est un compromis assumé pour respecter l'énoncé ("le formulaire envoie un email") sans backend dédié. Avant une mise en production réelle, remplacer par un vrai backend, ou par un simple `Linking.openURL('mailto:...')` si l'objectif est seulement de préparer l'envoi. Les identifiants EmailJS se renseignent dans `.env` (voir "Configuration" ci-dessous).
 - **Pas de pagination** ni de tri/recherche côté client sur la liste des formations (hors périmètre de l'énoncé).
 - **Pas de mode hors-ligne** : cohérent avec la contrainte explicite de ne pas stocker le catalogue localement.
 - Un avertissement Jest bénin ("The current testing environment is not configured to support act(...)") peut apparaître sur certains tests asynchrones ; il n'affecte pas le résultat des tests (tous passent) et vient d'une interaction connue entre React 19 et l'environnement de test React Native le plus récent.
+
+## Configuration (`.env`)
+
+Les valeurs sensibles ou propres à chaque poste (clés EmailJS, adresse de destination du devis, URL de l'API) ne sont pas écrites dans le code mais lues depuis un fichier `.env` local, ignoré par git.
+
+1. Copier le modèle : `copy .env.example .env` (Windows) ou `cp .env.example .env`.
+2. Renseigner `EXPO_PUBLIC_EMAILJS_SERVICE_ID`, `EXPO_PUBLIC_EMAILJS_TEMPLATE_ID`, `EXPO_PUBLIC_EMAILJS_PUBLIC_KEY` et `EXPO_PUBLIC_QUOTE_RECIPIENT_EMAIL`.
+3. Relancer Expo avec le cache vidé : `npx expo start -c`.
+
+Limite à connaître : Expo n'expose que les variables préfixées `EXPO_PUBLIC_`, et celles-ci sont **embarquées dans le bundle** de l'application. Le `.env` évite de les versionner, il ne les rend pas secrètes. Pour un vrai secret, il faut un backend.
