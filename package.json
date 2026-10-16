@@ -27,9 +27,9 @@
   },
   "scripts": {
     "start": "expo start --port 7788",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web --port 7788",
+    "android": "expo run:android --port 7788",
+    "ios": "expo run:ios",
+    "web": "npm start -- --web",
     "test": "jest",
     "test:watch": "jest --watch"
   },

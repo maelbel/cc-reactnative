@@ -4,24 +4,34 @@
 appId: com.lmcontrol.dawantrainingapp
 ---
 - launchApp
-- assertVisible:
-    id: "training-list"
+# Debug build: wait for the JS bundle (Metro) and the catalog request.
+- extendedWaitUntil:
+    visible:
+      id: "training-list"
+    timeout: 60000
 # Tap the first training card in the catalog.
 - tapOn:
     id: "training-item-.*"
     index: 0
 - assertVisible:
     id: "training-detail"
+# The CTA sits below the long description: scroll until it is on screen.
+- scrollUntilVisible:
+    element:
+      id: "ask-for-quote"
+    timeout: 30000
 - tapOn:
     id: "ask-for-quote"
 - assertVisible:
     id: "quote-form"
 - tapOn:
     id: "quote-fullName"
-- inputText: "Jane Doe"
+- inputText: "Mael Belliard"
 - tapOn:
     id: "quote-email"
-- inputText: "jane.doe@example.com"
+- inputText: "mael.belliard@laposte.net"
+- hideKeyboard
 - tapOn:
     id: "quote-submit"
-- assertVisible: "Demande envoyée"
+- assertVisible:
+    id: "quote-sent"

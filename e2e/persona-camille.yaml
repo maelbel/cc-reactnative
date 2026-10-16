@@ -1,0 +1,100 @@
+# Persona flow, run with Maestro: "le parcours de Camille".
+# Camille, développeuse mobile, cherche une formation pour se perfectionner.
+# Recherche -> Comparaison -> Demande de devis (validation) -> Envoi -> Retour au catalogue.
+# NB: the final step sends a real email through EmailJS (to the address set in .env).
+appId: com.lmcontrol.dawantrainingapp
+---
+- launchApp
+
+# 1. Recherche : Camille parcourt le catalogue.
+- extendedWaitUntil:
+    visible:
+      id: "training-list"
+    timeout: 60000
+
+# 2. Comparaison : elle ouvre une première formation, la lit, puis revient.
+- tapOn:
+    id: "training-item-.*"
+    index: 0
+- assertVisible:
+    id: "training-detail"
+- scroll
+- back
+- extendedWaitUntil:
+    visible:
+      id: "training-list"
+    timeout: 30000
+
+# ... puis une seconde, qu'elle retient.
+- tapOn:
+    id: "training-item-.*"
+    index: 1
+- assertVisible:
+    id: "training-detail"
+
+# 3. Demande de devis : le bouton est sous la description.
+- scrollUntilVisible:
+    element:
+      id: "ask-for-quote"
+    timeout: 30000
+- tapOn:
+    id: "ask-for-quote"
+- assertVisible:
+    id: "quote-form"
+
+# Validation : envoi à vide -> messages d'erreur.
+- scrollUntilVisible:
+    element:
+      id: "quote-submit"
+- tapOn:
+    id: "quote-submit"
+- assertVisible: "Le nom est obligatoire."
+- assertVisible: "L'email est obligatoire."
+
+# Validation : email mal formé.
+- tapOn:
+    id: "quote-fullName"
+- inputText: "Camille"
+- tapOn:
+    id: "quote-email"
+- inputText: "camille"
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: "quote-submit"
+- tapOn:
+    id: "quote-submit"
+- assertVisible: "Cet email ne semble pas valide."
+
+# Correction des champs (Camille utilise l'adresse de test).
+- tapOn:
+    id: "quote-fullName"
+- eraseText: 20
+- inputText: "Camille"
+- tapOn:
+    id: "quote-email"
+- eraseText: 40
+- inputText: "mael.belliard@laposte.net"
+- tapOn:
+    id: "quote-message"
+- inputText: "Développeuse mobile, je cherche un perfectionnement. Merci de me transmettre un devis."
+- hideKeyboard
+
+# 4. Envoi.
+- scrollUntilVisible:
+    element:
+      id: "quote-submit"
+- tapOn:
+    id: "quote-submit"
+
+# 5. Confirmation à l'écran, puis retour au catalogue.
+- extendedWaitUntil:
+    visible:
+      id: "quote-sent"
+    timeout: 30000
+- assertVisible: "Demande envoyée"
+- assertVisible: ".*mael.belliard@laposte.net.*"
+- tapOn:
+    id: "quote-sent-done"
+- assertVisible:
+    id: "training-list"
