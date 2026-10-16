@@ -68,10 +68,6 @@ appId: com.lmcontrol.dawantrainingapp
 
 # Correction des champs (Camille utilise l'adresse de test).
 - tapOn:
-    id: "quote-fullName"
-- eraseText: 20
-- inputText: "Camille"
-- tapOn:
     id: "quote-email"
 - eraseText: 40
 - inputText: "mael.belliard@laposte.net"
